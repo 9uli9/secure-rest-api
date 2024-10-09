@@ -19,7 +19,7 @@ class ProductTest extends TestCase
 
     private $superUser;
     private $customerUser;
-    private $supplierUser;
+    private $directorUser;
 
     protected function setUp(): void
     {
@@ -29,16 +29,16 @@ class ProductTest extends TestCase
 
         $superRole = Role::where('name', 'superuser')->first();
         $customerRole = Role::where('name', 'customer')->first();
-        $supplierRole = Role::where('name', 'supplier')->first();
+        $directorRole = Role::where('name', 'director')->first();
 
         $this->superUser = $superRole->users()->first();
         $this->customerUser = $customerRole->users()->first();
-        $this->supplierUser = $supplierRole->users()->first();
+        $this->directorUser = $directorRole->users()->first();
     }
 
     public function test_product_index(): void
     {
-        $response = $this->actingAs($this->supplierUser)
+        $response = $this->actingAs($this->directorUser)
                          ->getJson(route('products.index'));
 
         $response->assertStatus(200);
@@ -51,7 +51,7 @@ class ProductTest extends TestCase
                     'name',
                     'description',
                     'price',
-                    'supplier_id',
+                    'director_id',
                     'created_at',
                     'updated_at',
                 ]
@@ -99,7 +99,7 @@ class ProductTest extends TestCase
                     'name',
                     'description',
                     'price',
-                    'supplier_id',
+                    'director_id',
                     'created_at',
                     'updated_at',
                 ]
@@ -117,7 +117,7 @@ class ProductTest extends TestCase
     public function test_product_show(): void
     {
         $product = Product::factory()->create();
-        $response = $this->actingAs($this->supplierUser)
+        $response = $this->actingAs($this->directorUser)
                          ->getJson(route('products.show', $product->id));
         $response->assertStatus(200);
         $response->assertJsonStructure([
@@ -128,7 +128,7 @@ class ProductTest extends TestCase
                 'name',
                 'description',
                 'price',
-                'supplier_id',
+                'director_id',
                 'created_at',
                 'updated_at',
             ]
@@ -139,14 +139,14 @@ class ProductTest extends TestCase
         $name = $response->json('data.name');
         $description = $response->json('data.description');
         $price = $response->json('data.price');
-        $supplier_id = $response->json('data.supplier_id');
+        $director_id = $response->json('data.director_id');
 
         $this->assertEquals($success, true);
         $this->assertEquals($message, 'Product retrieved successfully.');
         $this->assertEquals($name, $product->name);
         $this->assertEquals($description, $product->description);
         $this->assertEquals($price, $product->price);
-        $this->assertEquals($supplier_id, $product->supplier_id);
+        $this->assertEquals($director_id, $product->director_id);
 
         $this->assertDatabaseHas('products', [
             'id' => $product->id
@@ -160,7 +160,7 @@ class ProductTest extends TestCase
                 $missing_productid = mt_rand();
         }
         
-        $response = $this->actingAs($this->supplierUser)
+        $response = $this->actingAs($this->directorUser)
                          ->getJson(route('products.show', $missing_productid));
 
         $response->assertStatus(404);
@@ -183,7 +183,7 @@ class ProductTest extends TestCase
     public function test_product_store(): void
     {
         $product = Product::factory()->make();
-        $response = $this->actingAs($this->supplierUser)
+        $response = $this->actingAs($this->directorUser)
                          ->postJson(route('products.store'), $product->toArray());
 
         $response->assertStatus(200);
@@ -195,7 +195,7 @@ class ProductTest extends TestCase
                 'name',
                 'description',
                 'price',
-                'supplier_id',
+                'director_id',
                 'created_at',
                 'updated_at',
             ]
@@ -206,14 +206,14 @@ class ProductTest extends TestCase
         $name = $response->json('data.name');
         $description = $response->json('data.description');
         $price = $response->json('data.price');
-        $supplier_id = $response->json('data.supplier_id');
+        $director_id = $response->json('data.director_id');
 
         $this->assertEquals($success, true);
         $this->assertEquals($message, 'Product created successfully.');
         $this->assertEquals($name, $product->name);
         $this->assertEquals($description, $product->description);
         $this->assertEquals($price, $product->price);
-        $this->assertEquals($supplier_id, $product->supplier_id);
+        $this->assertEquals($director_id, $product->director_id);
 
         $this->assertDatabaseHas('products', [
             'name' => $product->name
@@ -224,7 +224,7 @@ class ProductTest extends TestCase
     {
         $product = Product::factory()->make();
         $product->name = '';
-        $response = $this->actingAs($this->supplierUser)
+        $response = $this->actingAs($this->directorUser)
                          ->postJson(route('products.store'), $product->toArray());
 
         $response->assertStatus(422);
@@ -249,7 +249,7 @@ class ProductTest extends TestCase
     {
         $product = Product::factory()->create();
         $updatedProduct = Product::factory()->make();
-        $response = $this->actingAs($this->supplierUser)
+        $response = $this->actingAs($this->directorUser)
                          ->putJson(route('products.update', $product->id), $updatedProduct->toArray());
 
         $response->assertStatus(200);
@@ -261,7 +261,7 @@ class ProductTest extends TestCase
                 'name',
                 'description',
                 'price',
-                'supplier_id',
+                'director_id',
                 'created_at',
                 'updated_at',
             ]
@@ -272,14 +272,14 @@ class ProductTest extends TestCase
         $name = $response->json('data.name');
         $description = $response->json('data.description');
         $price = $response->json('data.price');
-        $supplier_id = $response->json('data.supplier_id');
+        $director_id = $response->json('data.director_id');
 
         $this->assertEquals($success, true);
         $this->assertEquals($message, 'Product updated successfully.');
         $this->assertEquals($name, $updatedProduct->name);
         $this->assertEquals($description, $updatedProduct->description);
         $this->assertEquals($price, $updatedProduct->price);
-        $this->assertEquals($supplier_id, $updatedProduct->supplier_id);
+        $this->assertEquals($director_id, $updatedProduct->director_id);
 
         $this->assertDatabaseHas('products', [
             'name' => $updatedProduct->name
@@ -291,7 +291,7 @@ class ProductTest extends TestCase
         $product = Product::factory()->create();
         $updatedProduct = Product::factory()->make();
         $updatedProduct->name = '';
-        $response = $this->actingAs($this->supplierUser)
+        $response = $this->actingAs($this->directorUser)
                          ->putJson(route('products.update', $product->id), $updatedProduct->toArray());
 
         $response->assertStatus(422);
@@ -322,7 +322,7 @@ class ProductTest extends TestCase
         while(Product::where('id', $missing_productid)->count() > 0) {
                 $missing_productid = mt_rand();
         }
-        $response = $this->actingAs($this->supplierUser)
+        $response = $this->actingAs($this->directorUser)
                          ->putJson(route('products.update', $missing_productid), $updatedProduct->toArray());
 
         $response->assertStatus(404);
@@ -345,7 +345,7 @@ class ProductTest extends TestCase
     public function test_product_destroy(): void
     {
         $product = Product::factory()->create();
-        $response = $this->actingAs($this->supplierUser)
+        $response = $this->actingAs($this->directorUser)
                          ->deleteJson(route('products.destroy', $product->id));
         
         $response->assertStatus(200);
@@ -375,7 +375,7 @@ class ProductTest extends TestCase
         while(Product::where('id', $missing_productid)->count() > 0) {
                 $missing_productid = mt_rand();
         }
-        $response = $this->actingAs($this->supplierUser)
+        $response = $this->actingAs($this->directorUser)
                          ->deleteJson(route('products.destroy', $missing_productid));
 
         $response->assertStatus(404);

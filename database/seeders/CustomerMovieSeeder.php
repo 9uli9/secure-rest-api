@@ -1,4 +1,5 @@
 <?php
+
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
@@ -11,11 +12,6 @@ class CustomerMovieSeeder extends Seeder
     {
         $customers = Customer::all(); 
         $movies = Movie::all(); 
-    
-        foreach ($customers as $customer) {
-            $customer->movies()->attach(
-                $movies->random(rand(1, 3))->pluck('id')->toArray() 
-            );
+
         }
     }
-}

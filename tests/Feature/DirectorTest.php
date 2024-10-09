@@ -19,7 +19,7 @@ class SupplierTest extends TestCase
 
     private $superUser;
     private $customerUser;
-    private $supplierUser;
+    private $directorUser;
 
     protected function setUp(): void
     {
@@ -29,17 +29,17 @@ class SupplierTest extends TestCase
 
         $superRole = Role::where('name', 'superuser')->first();
         $customerRole = Role::where('name', 'customer')->first();
-        $supplierRole = Role::where('name', 'supplier')->first();
+        $directorRole = Role::where('name', 'director')->first();
 
         $this->superUser = $superRole->users()->first();
         $this->customerUser = $customerRole->users()->first();
-        $this->supplierUser = $supplierRole->users()->first();
+        $this->directorUser = $directorRole->users()->first();
     }
 
-    public function test_supplier_index(): void
+    public function test_director_index(): void
     {
-        $response = $this->actingAs($this->supplierUser)
-                         ->getJson(route('suppliers.index'));
+        $response = $this->actingAs($this->directorUser)
+                         ->getJson(route('directors.index'));
 
         $response->assertStatus(200);
         $response->assertJsonStructure([
@@ -59,17 +59,17 @@ class SupplierTest extends TestCase
         ]);
         $success = $response->json('success');
         $message = $response->json('message');
-        $suppliers = $response->json('data');
+        $directors = $response->json('data');
 
         $this->assertEquals($success, true);
-        $this->assertEquals($message, 'Suppliers retrieved successfully.');
-        $this->assertCount(10, $suppliers);
+        $this->assertEquals($message, 'directors retrieved successfully.');
+        $this->assertCount(10, $directors);
     }
 
-    public function test_supplier_index_authorisation_fail(): void
+    public function test_director_index_authorisation_fail(): void
     {
         $response = $this->actingAs($this->customerUser)
-                         ->getJson(route('suppliers.index'));
+                         ->getJson(route('directors.index'));
 
         $response->assertStatus(403);
         $response->assertJsonStructure([
@@ -84,10 +84,10 @@ class SupplierTest extends TestCase
         $this->assertEquals($message, 'Permission denied.');
     }
 
-    public function test_supplier_index_authorisation_super(): void
+    public function test_director_index_authorisation_super(): void
     {
         $response = $this->actingAs($this->superUser)
-                         ->getJson(route('suppliers.index'));
+                         ->getJson(route('directors.index'));
 
         $response->assertStatus(200);
         $response->assertJsonStructure([
@@ -107,17 +107,17 @@ class SupplierTest extends TestCase
         ]);
         $success = $response->json('success');
         $message = $response->json('message');
-        $suppliers = $response->json('data');
+        $directors = $response->json('data');
 
         $this->assertEquals($success, true);
-        $this->assertEquals($message, 'Suppliers retrieved successfully.');
-        $this->assertCount(10, $suppliers);
+        $this->assertEquals($message, 'directors retrieved successfully.');
+        $this->assertCount(10, $directors);
     }
 
-    public function test_supplier_show(): void
+    public function test_director_show(): void
     {
-        $supplier = Supplier::factory()->create();
-        $response = $this->actingAs($this->supplierUser)
+        $director = director::factory()->create();
+        $response = $this->actingAs($this->directorUser)
                          ->getJson(route('suppliers.show', $supplier->id));
         $response->assertStatus(200);
         $response->assertJsonStructure([

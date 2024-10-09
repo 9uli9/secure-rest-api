@@ -7,10 +7,10 @@ use Illuminate\Foundation\Testing\WithFaker;
 
 use Tests\TestCase;
 use App\Models\Customer;
-use App\Models\Supplier;
+use App\Models\Director;
 use App\Models\User;
 use Database\Seeders\CustomerSeeder;
-use Database\Seeders\SupplierSeeder;
+use Database\Seeders\DirectorSeeder;
 use Database\Seeders\RoleSeeder;
 use Database\Seeders\PermissionSeeder;
 use Database\Seeders\UserSeeder;
@@ -31,7 +31,7 @@ class FactoryAndSeederTest extends TestCase
         $this->assertDatabaseHas('roles', ['name' => 'superuser']);
         $this->assertDatabaseHas('roles', ['name' => 'admin'    ]);
         $this->assertDatabaseHas('roles', ['name' => 'customer' ]);
-        $this->assertDatabaseHas('roles', ['name' => 'supplier' ]);
+        $this->assertDatabaseHas('roles', ['name' => 'director' ]);
     }
 
     public function test_permission_seeder()
@@ -67,27 +67,27 @@ class FactoryAndSeederTest extends TestCase
         $this->assertDatabaseCount('users', 4);
     }
 
-    public function test_supplier_factory()
+    public function test_director_factory()
     {
-        $supplier = Supplier::factory()->make();
+        $director = Director::factory()->make();
 
-        $this->assertInstanceOf(Supplier::class, $supplier);
-        $this->assertNotNull($supplier->name);
-        $this->assertNotNull($supplier->address);
-        $this->assertNotNull($supplier->phone);
-        $this->assertNotNull($supplier->email);
+        $this->assertInstanceOf(Director::class, $director);
+        $this->assertNotNull($director->name);
+        $this->assertNotNull($director->address);
+        $this->assertNotNull($director->phone);
+        $this->assertNotNull($director->email);
 
-        $supplier = Supplier::factory()->make();
-        $this->assertDatabaseMissing('suppliers', ['name' => $supplier->name]);
+        $director = Director::factory()->make();
+        $this->assertDatabaseMissing('directors', ['name' => $director->name]);
 
-        $supplier = Supplier::factory()->create();
-        $this->assertDatabaseHas('suppliers', ['name' => $supplier->name]);
+        $director = Director::factory()->create();
+        $this->assertDatabaseHas('directors', ['name' => $director->name]);
     }
 
-    public function test_supplier_seeder()
+    public function test_director_seeder()
     {
-        $this->seed(SupplierSeeder::class);
-        $this->assertDatabaseCount('suppliers', 10);
+        $this->seed(DirectorSeeder::class);
+        $this->assertDatabaseCount('directors', 10);
     }
 
     public function test_customer_factory()

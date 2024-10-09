@@ -19,7 +19,7 @@ class CustomerTest extends TestCase
 
     private $superUser;
     private $customerUser;
-    private $supplierUser;
+    private $directorUser;
 
     protected function setUp(): void
     {
@@ -29,11 +29,11 @@ class CustomerTest extends TestCase
 
         $superRole = Role::where('name', 'superuser')->first();
         $customerRole = Role::where('name', 'customer')->first();
-        $supplierRole = Role::where('name', 'supplier')->first();
+        $directorRole = Role::where('name', 'director')->first();
 
         $this->superUser = $superRole->users()->first();
         $this->customerUser = $customerRole->users()->first();
-        $this->supplierUser = $supplierRole->users()->first();
+        $this->directorUser = $directorRole->users()->first();
     }
 
     public function test_customer_index(): void
@@ -68,7 +68,7 @@ class CustomerTest extends TestCase
 
     public function test_customer_index_authorisation_fail(): void
     {
-        $response = $this->actingAs($this->supplierUser)
+        $response = $this->actingAs($this->directorUser)
                          ->getJson(route('customers.index'));
 
         $response->assertStatus(403);

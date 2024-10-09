@@ -14,7 +14,7 @@ class CustomerFactory extends Factory
         return [
             'name' => $this->faker->unique()->name(), 
             'address' => $this->faker->address(), 
-            'dob' => $this->faker->dateTimeBetween('-99 years', '-18 years')->format('Y-m-d'),
+            'dob' => $this->faker->date('Y-m-d','-18 years'),
             'phone' => $this->faker->numerify('+353 8# ### ####'), 
         ];
     }

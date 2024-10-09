@@ -13,7 +13,7 @@ class MovieFactory extends Factory
     public function definition(): array
     {
         return [
-            'title' => $this->faker->sentence(3, true), 
+            'title' => $this->faker->sentence(3), 
             'duration' => $this->faker->numberBetween(60, 180), 
             'rating' => $this->faker->randomElement(['1', '2', '3', '4', '5']), 
             'year' => $this->faker->year(), 

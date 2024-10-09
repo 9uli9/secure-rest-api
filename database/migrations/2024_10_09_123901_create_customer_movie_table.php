@@ -10,10 +10,13 @@ class CreateCustomerMovieTable extends Migration
     {
         Schema::create('customer_movie', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('customer_id')->constrained()->onDelete('cascade'); 
-            $table->foreignId('movie_id')->constrained()->onDelete('cascade'); 
+            $table->foreignId('customer_id')->constrained()->onDelete('cascade');
+            $table->foreignId('movie_id')->constrained()->onDelete('cascade');
+            $table->dateTime('due');
+            $table->boolean('extended'); 
             $table->timestamps();
         });
+        
     }
 
     public function down(): void

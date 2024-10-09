@@ -13,8 +13,8 @@ class DirectorFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake('en_GB')->company(),
-            'website' => fake('en_GB')->url()
+            'name' => $this->faker->company(),
+            'website' => $this->faker->url()
         ];
     }
 }

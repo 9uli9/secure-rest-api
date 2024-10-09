@@ -14,10 +14,10 @@ class PermissionSeeder extends Seeder
         $superRole    = Role::where("name", "superuser")->firstOrFail();
         $adminRole    = Role::where("name", "admin"    )->firstOrFail();
         $customerRole = Role::where("name", "customer" )->firstOrFail();
-        $supplierRole = Role::where("name", "supplier" )->firstOrFail();
+        $directorRole = Role::where("name", "director" )->firstOrFail();
 
         $resources = [
-            "customer", "order", "product", "supplier", "user"
+            "customer", "order", "product", "director", "user"
         ];
         $verbs = [
             "view", "viewAny", "create", "update", "delete", "restore", "forceDelete"
@@ -31,8 +31,8 @@ class PermissionSeeder extends Seeder
                 if ($resource == "customer" || $resource == "order") {
                     $customerRole->assignPermission($permission);
                 }
-                else if ($resource == "supplier" || $resource == "product") {
-                    $supplierRole->assignPermission($permission);
+                else if ($resource == "director" || $resource == "product") {
+                    $directorRole->assignPermission($permission);
                 }
                 else {
                     $adminRole->assignPermission($permission);

@@ -15,7 +15,7 @@ class UserSeeder extends Seeder
         $superRole    = Role::where("name", "superuser")->firstOrFail();
         $adminRole    = Role::where("name", "admin"    )->firstOrFail();
         $customerRole = Role::where("name", "customer" )->firstOrFail();
-        $supplierRole = Role::where("name", "supplier" )->firstOrFail();
+        $directorRole = Role::where("name", "director" )->firstOrFail();
 
         $superUser = User::factory()->create();
         $superUser->assignRole($superRole);
@@ -26,7 +26,7 @@ class UserSeeder extends Seeder
         $customerAdminUser = User::factory()->create();
         $customerAdminUser->assignRole($customerRole);
         
-        $supplierAdminUser = User::factory()->create();
-        $supplierAdminUser->assignRole($supplierRole);
+        $directorAdminUser = User::factory()->create();
+        $directorAdminUser->assignRole($directorRole);
     }
 }
