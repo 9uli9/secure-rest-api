@@ -3,26 +3,19 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Str;
+use App\Models\Customer;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Customer>
- */
 class CustomerFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
+    protected $model = Customer::class;
+
     public function definition(): array
     {
-        $name = fake('en_GB')->unique()->name();
         return [
-            'name' => $name,
-            'address' => fake('en_GB')->address(),
-            'phone' => fake('en_GB')->phoneNumber(),
-            'email' => Str::slug($name) . '@' . fake()->safeEmailDomain()
+            'name' => $this->faker->unique()->name(), 
+            'address' => $this->faker->address(), 
+            'dob' => $this->faker->dateTimeBetween('-99 years', '-18 years')->format('Y-m-d'),
+            'phone' => $this->faker->numerify('+353 8# ### ####'), 
         ];
     }
 }

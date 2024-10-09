@@ -26,18 +26,18 @@ Route::middleware('auth:sanctum')->group( function () {
         
         return response()->json($response, 404);
     });
-    Route::apiResource('suppliers', SupplierController::class)->missing(function (Request $request) {
+    Route::apiResource('directors', DirectorController::class)->missing(function (Request $request) {
         $response = [
             'success' => false,
-            'message' => 'Supplier not found.'
+            'message' => 'Director not found.'
         ];
         
         return response()->json($response, 404);
     });
-    Route::apiResource('products', ProductController::class)->missing(function (Request $request) {
+    Route::apiResource('movies', MovieController::class)->missing(function (Request $request) {
         $response = [
             'success' => false,
-            'message' => 'Product not found.'
+            'message' => 'Movie not found.'
         ];
         
         return response()->json($response, 404);
