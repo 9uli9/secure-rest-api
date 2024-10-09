@@ -8,31 +8,85 @@ use Illuminate\Support\Facades\Exceptions;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 use Tests\TestCase;
-use Database\Seeders\SupplierSeeder;
 
 use App\Models\Supplier;
-use App\Models\User;
+use App\Models\Role;
 
 class SupplierTest extends TestCase
 {
     // Create the database and run the migrations in each test
     use RefreshDatabase; 
 
-    private $token;
+    private $superUser;
+    private $customerUser;
+    private $supplierUser;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->seed(SupplierSeeder::class);
+        $this->seed();
 
-        $user = User::factory()->create();
-        $this->token = $user->createToken('MyApp')->plainTextToken;
+        $superRole = Role::where('name', 'superuser')->first();
+        $customerRole = Role::where('name', 'customer')->first();
+        $supplierRole = Role::where('name', 'supplier')->first();
+
+        $this->superUser = $superRole->users()->first();
+        $this->customerUser = $customerRole->users()->first();
+        $this->supplierUser = $supplierRole->users()->first();
     }
 
     public function test_supplier_index(): void
     {
-        $response = $this->withHeader('Authorization', 'Bearer ' . $this->token)
+        $response = $this->actingAs($this->supplierUser)
+                         ->getJson(route('suppliers.index'));
+
+        $response->assertStatus(200);
+        $response->assertJsonStructure([
+            'success',
+            'message',
+            'data' => [
+                '*' => [
+                    'id',
+                    'name',
+                    'address',
+                    'phone',
+                    'email',
+                    'created_at',
+                    'updated_at',
+                ]
+            ]
+        ]);
+        $success = $response->json('success');
+        $message = $response->json('message');
+        $suppliers = $response->json('data');
+
+        $this->assertEquals($success, true);
+        $this->assertEquals($message, 'Suppliers retrieved successfully.');
+        $this->assertCount(10, $suppliers);
+    }
+
+    public function test_supplier_index_authorisation_fail(): void
+    {
+        $response = $this->actingAs($this->customerUser)
+                         ->getJson(route('suppliers.index'));
+
+        $response->assertStatus(403);
+        $response->assertJsonStructure([
+            'success',
+            'message',
+            'data'
+        ]);
+        $success = $response->json('success');
+        $message = $response->json('message');
+
+        $this->assertEquals($success, false);
+        $this->assertEquals($message, 'Permission denied.');
+    }
+
+    public function test_supplier_index_authorisation_super(): void
+    {
+        $response = $this->actingAs($this->superUser)
                          ->getJson(route('suppliers.index'));
 
         $response->assertStatus(200);
@@ -63,7 +117,7 @@ class SupplierTest extends TestCase
     public function test_supplier_show(): void
     {
         $supplier = Supplier::factory()->create();
-        $response = $this->withHeader('Authorization', 'Bearer ' . $this->token)
+        $response = $this->actingAs($this->supplierUser)
                          ->getJson(route('suppliers.show', $supplier->id));
         $response->assertStatus(200);
         $response->assertJsonStructure([
@@ -106,7 +160,7 @@ class SupplierTest extends TestCase
                 $missing_supplier_id = mt_rand();
         }
         
-        $response = $this->withHeader('Authorization', 'Bearer ' . $this->token)
+        $response = $this->actingAs($this->supplierUser)
                          ->getJson(route('suppliers.show', $missing_supplier_id));
 
         $response->assertStatus(404);
@@ -129,7 +183,7 @@ class SupplierTest extends TestCase
     public function test_supplier_store(): void
     {
         $supplier = Supplier::factory()->make();
-        $response = $this->withHeader('Authorization', 'Bearer ' . $this->token)
+        $response = $this->actingAs($this->supplierUser)
                          ->postJson(route('suppliers.store'), $supplier->toArray());
 
         $response->assertStatus(200);
@@ -170,10 +224,10 @@ class SupplierTest extends TestCase
     {
         $supplier = Supplier::factory()->make();
         $supplier->name = '';
-        $response = $this->withHeader('Authorization', 'Bearer ' . $this->token)
+        $response = $this->actingAs($this->supplierUser)
                          ->postJson(route('suppliers.store'), $supplier->toArray());
 
-        $response->assertStatus(404);
+        $response->assertStatus(422);
         $response->assertJsonStructure([
             'data',
             'message',
@@ -195,7 +249,7 @@ class SupplierTest extends TestCase
     {
         $supplier = Supplier::factory()->create();
         $updatedSupplier = Supplier::factory()->make();
-        $response = $this->withHeader('Authorization', 'Bearer ' . $this->token)
+        $response = $this->actingAs($this->supplierUser)
                          ->putJson(route('suppliers.update', $supplier->id), $updatedSupplier->toArray());
 
         $response->assertStatus(200);
@@ -237,10 +291,10 @@ class SupplierTest extends TestCase
         $supplier = Supplier::factory()->create();
         $updatedSupplier = Supplier::factory()->make();
         $updatedSupplier->name = '';
-        $response = $this->withHeader('Authorization', 'Bearer ' . $this->token)
+        $response = $this->actingAs($this->supplierUser)
                          ->putJson(route('suppliers.update', $supplier->id), $updatedSupplier->toArray());
 
-        $response->assertStatus(404);
+        $response->assertStatus(422);
         $response->assertJsonStructure([
             'data',
             'message',
@@ -268,7 +322,7 @@ class SupplierTest extends TestCase
         while(Supplier::where('id', $missing_supplier_id)->count() > 0) {
                 $missing_supplier_id = mt_rand();
         }
-        $response = $this->withHeader('Authorization', 'Bearer ' . $this->token)
+        $response = $this->actingAs($this->supplierUser)
                          ->putJson(route('suppliers.update', $missing_supplier_id), $updatedSupplier->toArray());
 
         $response->assertStatus(404);
@@ -291,7 +345,7 @@ class SupplierTest extends TestCase
     public function test_supplier_destroy(): void
     {
         $supplier = Supplier::factory()->create();
-        $response = $this->withHeader('Authorization', 'Bearer ' . $this->token)
+        $response = $this->actingAs($this->supplierUser)
                          ->deleteJson(route('suppliers.destroy', $supplier->id));
         
         $response->assertStatus(200);
@@ -321,7 +375,7 @@ class SupplierTest extends TestCase
         while(Supplier::where('id', $missing_supplier_id)->count() > 0) {
                 $missing_supplier_id = mt_rand();
         }
-        $response = $this->withHeader('Authorization', 'Bearer ' . $this->token)
+        $response = $this->actingAs($this->supplierUser)
                          ->deleteJson(route('suppliers.destroy', $missing_supplier_id));
 
         $response->assertStatus(404);
