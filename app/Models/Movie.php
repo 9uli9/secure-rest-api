@@ -15,4 +15,11 @@ class Movie extends Model
         'rating',
         'year',
     ];
+
+    public function customers()
+    {
+        return $this->belongsToMany(Customer::class, 'customer_movie');
+    }
+
+    
 }

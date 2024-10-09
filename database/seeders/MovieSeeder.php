@@ -8,11 +8,8 @@ use App\Models\Movie;
 
 class MovieSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        Movie::factory()->count(100)->create();
+        Movie::factory()->count(50)->create();
     }
 }

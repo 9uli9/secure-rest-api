@@ -15,12 +15,18 @@ return new class extends Migration
             $table->char('rating', 1);
             $table->string('year');
             $table->timestamps();
+             
+        });
+
+        Schema::table('movies', function (Blueprint $table) {
+            $table->foreignId('director_id')->constrained()->onUpdate('restrict')->onDelete('restrict');
         });
     }
-
     public function down(): void
     {
+        Schema::table('movies', function (Blueprint $table) {
+            $table->dropConstrainedForeignId('director_id');
+        });
         Schema::dropIfExists('movies');
     }
-}
-;
+};

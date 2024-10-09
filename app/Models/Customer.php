@@ -12,4 +12,9 @@ class Customer extends Model
     protected $fillable = [
         'name', 'address', 'dob', 'phone'
     ];
+
+    public function movies()
+    {
+        return $this->belongsToMany(Movie::class, 'customer_movie');
+    }
 }

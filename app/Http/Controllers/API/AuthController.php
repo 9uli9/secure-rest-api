@@ -13,11 +13,7 @@ use Validator;
    
 class AuthController extends BaseController
 {
-    /**
-     * Register api
-     *
-     * @return \Illuminate\Http\Response
-     */
+    
     public function register(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
@@ -40,11 +36,6 @@ class AuthController extends BaseController
         return $this->sendResponse($success, 'User register successfully.');
     }
    
-    /**
-     * Login api
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function login(Request $request): JsonResponse
     {
         if(Auth::attempt(['email' => $request->email, 'password' => $request->password])){ 
