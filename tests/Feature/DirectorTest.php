@@ -9,10 +9,10 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 use Tests\TestCase;
 
-use App\Models\Supplier;
+use App\Models\Director;
 use App\Models\Role;
 
-class SupplierTest extends TestCase
+class DirectorTest extends TestCase
 {
     // Create the database and run the migrations in each test
     use RefreshDatabase; 
@@ -116,9 +116,9 @@ class SupplierTest extends TestCase
 
     public function test_director_show(): void
     {
-        $director = director::factory()->create();
+        $director = Director::factory()->create();
         $response = $this->actingAs($this->directorUser)
-                         ->getJson(route('suppliers.show', $supplier->id));
+                         ->getJson(route('directors.show', $director->id));
         $response->assertStatus(200);
         $response->assertJsonStructure([
             'success',
@@ -142,26 +142,26 @@ class SupplierTest extends TestCase
         $email = $response->json('data.email');
 
         $this->assertEquals($success, true);
-        $this->assertEquals($message, 'Supplier retrieved successfully.');
-        $this->assertEquals($name, $supplier->name);
-        $this->assertEquals($address, $supplier->address);
-        $this->assertEquals($phone, $supplier->phone);
-        $this->assertEquals($email, $supplier->email);
+        $this->assertEquals($message, 'director retrieved successfully.');
+        $this->assertEquals($name, $director->name);
+        $this->assertEquals($address, $director->address);
+        $this->assertEquals($phone, $director->phone);
+        $this->assertEquals($email, $director->email);
 
-        $this->assertDatabaseHas('suppliers', [
-            'id' => $supplier->id
+        $this->assertDatabaseHas('directors', [
+            'id' => $director->id
         ]);
     }
 
-    public function test_supplier_show_not_found_error(): void
+    public function test_director_show_not_found_error(): void
     {
-        $missing_supplier_id = mt_rand();
-        while(Supplier::where('id', $missing_supplier_id)->count() > 0) {
-                $missing_supplier_id = mt_rand();
+        $missing_director_id = mt_rand();
+        while(Director::where('id', $missing_director_id)->count() > 0) {
+                $missing_director_id = mt_rand();
         }
         
-        $response = $this->actingAs($this->supplierUser)
-                         ->getJson(route('suppliers.show', $missing_supplier_id));
+        $response = $this->actingAs($this->directorUser)
+                         ->getJson(route('directors.show', $missing_director_id));
 
         $response->assertStatus(404);
         $response->assertJsonStructure([
@@ -173,18 +173,18 @@ class SupplierTest extends TestCase
         $message = $response->json('message');
         
         $this->assertEquals($success, false);
-        $this->assertEquals($message, 'Supplier not found.');
+        $this->assertEquals($message, 'director not found.');
 
-        $this->assertDatabaseMissing('suppliers', [
-            'id' => $missing_supplier_id
+        $this->assertDatabaseMissing('directors', [
+            'id' => $missing_director_id
         ]);
     }
 
-    public function test_supplier_store(): void
+    public function test_director_store(): void
     {
-        $supplier = Supplier::factory()->make();
-        $response = $this->actingAs($this->supplierUser)
-                         ->postJson(route('suppliers.store'), $supplier->toArray());
+        $director = Director::factory()->make();
+        $response = $this->actingAs($this->directorUser)
+                         ->postJson(route('directors.store'), $director->toArray());
 
         $response->assertStatus(200);
         $response->assertJsonStructure([
@@ -209,23 +209,23 @@ class SupplierTest extends TestCase
         $email = $response->json('data.email');
 
         $this->assertEquals($success, true);
-        $this->assertEquals($message, 'Supplier created successfully.');
-        $this->assertEquals($name, $supplier->name);
-        $this->assertEquals($address, $supplier->address);
-        $this->assertEquals($phone, $supplier->phone);
-        $this->assertEquals($email, $supplier->email);
+        $this->assertEquals($message, 'director created successfully.');
+        $this->assertEquals($name, $director->name);
+        $this->assertEquals($address, $director->address);
+        $this->assertEquals($phone, $director->phone);
+        $this->assertEquals($email, $director->email);
 
-        $this->assertDatabaseHas('suppliers', [
-            'name' => $supplier->name
+        $this->assertDatabaseHas('directors', [
+            'name' => $director->name
         ]);
     }
 
-    public function test_supplier_store_validation_error(): void
+    public function test_director_store_validation_error(): void
     {
-        $supplier = Supplier::factory()->make();
-        $supplier->name = '';
-        $response = $this->actingAs($this->supplierUser)
-                         ->postJson(route('suppliers.store'), $supplier->toArray());
+        $director = Director::factory()->make();
+        $director->name = '';
+        $response = $this->actingAs($this->directorUser)
+                         ->postJson(route('directors.store'), $director->toArray());
 
         $response->assertStatus(422);
         $response->assertJsonStructure([
@@ -240,17 +240,17 @@ class SupplierTest extends TestCase
         $this->assertEquals($success, false);
         $this->assertEquals($message, 'Validation Error.');
 
-        $this->assertDatabaseMissing('suppliers', [
-            'name' => $supplier->name
+        $this->assertDatabaseMissing('directors', [
+            'name' => $director->name
         ]);
     }
 
-    public function test_supplier_update(): void
+    public function test_director_update(): void
     {
-        $supplier = Supplier::factory()->create();
-        $updatedSupplier = Supplier::factory()->make();
-        $response = $this->actingAs($this->supplierUser)
-                         ->putJson(route('suppliers.update', $supplier->id), $updatedSupplier->toArray());
+        $director = Director::factory()->create();
+        $updateddirector = Director::factory()->make();
+        $response = $this->actingAs($this->directorUser)
+                         ->putJson(route('directors.update', $director->id), $updateddirector->toArray());
 
         $response->assertStatus(200);
         $response->assertJsonStructure([
@@ -275,24 +275,24 @@ class SupplierTest extends TestCase
         $email = $response->json('data.email');
 
         $this->assertEquals($success, true);
-        $this->assertEquals($message, 'Supplier updated successfully.');
-        $this->assertEquals($name, $updatedSupplier->name);
-        $this->assertEquals($address, $updatedSupplier->address);
-        $this->assertEquals($phone, $updatedSupplier->phone);
-        $this->assertEquals($email, $updatedSupplier->email);
+        $this->assertEquals($message, 'director updated successfully.');
+        $this->assertEquals($name, $updatedDirector->name);
+        $this->assertEquals($address, $updatedDirector->address);
+        $this->assertEquals($phone, $updatedDirector->phone);
+        $this->assertEquals($email, $updatedDirector->email);
 
-        $this->assertDatabaseHas('suppliers', [
-            'name' => $updatedSupplier->name
+        $this->assertDatabaseHas('directors', [
+            'name' => $updatedDirector->name
         ]);
     }
 
-    public function test_supplier_update_validation_error(): void
+    public function test_director_update_validation_error(): void
     {
-        $supplier = Supplier::factory()->create();
-        $updatedSupplier = Supplier::factory()->make();
-        $updatedSupplier->name = '';
-        $response = $this->actingAs($this->supplierUser)
-                         ->putJson(route('suppliers.update', $supplier->id), $updatedSupplier->toArray());
+        $director = Director::factory()->create();
+        $updatedDirector = Director::factory()->make();
+        $updatedDirector->name = '';
+        $response = $this->actingAs($this->directorUser)
+                         ->putJson(route('directors.update', $director->id), $updatedDirector->toArray());
 
         $response->assertStatus(422);
         $response->assertJsonStructure([
@@ -307,23 +307,23 @@ class SupplierTest extends TestCase
         $this->assertEquals($success, false);
         $this->assertEquals($message, 'Validation Error.');
 
-        $this->assertDatabaseMissing('suppliers', [
-            'name' => $updatedSupplier->name
+        $this->assertDatabaseMissing('directors', [
+            'name' => $updatedDirector->name
         ]);
-        $this->assertDatabaseHas('suppliers', [
-            'name' => $supplier->name
+        $this->assertDatabaseHas('directors', [
+            'name' => $director->name
         ]);
     }
 
-    public function test_supplier_update_not_found_error(): void
+    public function test_director_update_not_found_error(): void
     {
-        $updatedSupplier = Supplier::factory()->make();
-        $missing_supplier_id = mt_rand();
-        while(Supplier::where('id', $missing_supplier_id)->count() > 0) {
-                $missing_supplier_id = mt_rand();
+        $updatedDirector = Director::factory()->make();
+        $missing_director_id = mt_rand();
+        while(Director::where('id', $missing_director_id)->count() > 0) {
+                $missing_director_id = mt_rand();
         }
-        $response = $this->actingAs($this->supplierUser)
-                         ->putJson(route('suppliers.update', $missing_supplier_id), $updatedSupplier->toArray());
+        $response = $this->actingAs($this->directorUser)
+                         ->putJson(route('directors.update', $missing_director_id), $updatedDirector->toArray());
 
         $response->assertStatus(404);
         $response->assertJsonStructure([
@@ -335,18 +335,18 @@ class SupplierTest extends TestCase
         $message = $response->json('message');
         
         $this->assertEquals($success, false);
-        $this->assertEquals($message, 'Supplier not found.');
+        $this->assertEquals($message, 'director not found.');
 
-        $this->assertDatabaseMissing('suppliers', [
-            'id' => $missing_supplier_id
+        $this->assertDatabaseMissing('directors', [
+            'id' => $missing_director_id
         ]);
     }
 
-    public function test_supplier_destroy(): void
+    public function test_director_destroy(): void
     {
-        $supplier = Supplier::factory()->create();
-        $response = $this->actingAs($this->supplierUser)
-                         ->deleteJson(route('suppliers.destroy', $supplier->id));
+        $director = Director::factory()->create();
+        $response = $this->actingAs($this->directorUser)
+                         ->deleteJson(route('directors.destroy', $director->id));
         
         $response->assertStatus(200);
         $response->assertJsonStructure([
@@ -360,23 +360,23 @@ class SupplierTest extends TestCase
         $data = $response->json('data');
 
         $this->assertEquals($success, true);
-        $this->assertEquals($message, 'Supplier deleted successfully.');
+        $this->assertEquals($message, 'director deleted successfully.');
         $this->assertEmpty($data);
 
-        $this->assertDatabaseMissing('suppliers', [
-            'id' => $supplier->id,
+        $this->assertDatabaseMissing('directors', [
+            'id' => $director->id,
         ]);
     }
 
-    public function test_supplier_destroy_not_found_error(): void
+    public function test_director_destroy_not_found_error(): void
     {
-        $updatedSupplier = Supplier::factory()->make();
-        $missing_supplier_id = mt_rand();
-        while(Supplier::where('id', $missing_supplier_id)->count() > 0) {
-                $missing_supplier_id = mt_rand();
+        $updatedDirector = Director::factory()->make();
+        $missing_director_id = mt_rand();
+        while(Director::where('id', $missing_director_id)->count() > 0) {
+                $missing_director_id = mt_rand();
         }
-        $response = $this->actingAs($this->supplierUser)
-                         ->deleteJson(route('suppliers.destroy', $missing_supplier_id));
+        $response = $this->actingAs($this->directorUser)
+                         ->deleteJson(route('directors.destroy', $missing_director_id));
 
         $response->assertStatus(404);
         $response->assertJsonStructure([
@@ -388,10 +388,10 @@ class SupplierTest extends TestCase
         $message = $response->json('message');
         
         $this->assertEquals($success, false);
-        $this->assertEquals($message, 'Supplier not found.');
+        $this->assertEquals($message, 'director not found.');
 
-        $this->assertDatabaseMissing('suppliers', [
-            'id' => $missing_supplier_id
+        $this->assertDatabaseMissing('directors', [
+            'id' => $missing_director_id
         ]);
     }
 }

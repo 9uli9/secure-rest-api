@@ -7,9 +7,11 @@ use Illuminate\Foundation\Testing\WithFaker;
 
 use Tests\TestCase;
 use App\Models\Customer;
+use App\Models\Movie;
 use App\Models\Director;
 use App\Models\User;
 use Database\Seeders\CustomerSeeder;
+use Database\Seeders\MovieSeeder;
 use Database\Seeders\DirectorSeeder;
 use Database\Seeders\RoleSeeder;
 use Database\Seeders\PermissionSeeder;

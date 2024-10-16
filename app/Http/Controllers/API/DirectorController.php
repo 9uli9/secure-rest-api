@@ -7,33 +7,33 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Gate;
 
 use App\Http\Controllers\API\BaseController as BaseController;
-use App\Http\Resources\CustomerResource;
-use App\Models\Customer;
+use App\Http\Resources\DirectorResource;
+use App\Models\Director;
 
 use Validator;
 
-class CustomerController extends BaseController
+class DirectorController extends BaseController
 {
     public function index(): JsonResponse
     {
-        if (Gate::denies('viewAny', Customer::class)) {
+        if (Gate::denies('viewAny', Director::class)) {
             return $this->sendError(
                 'Permission denied.', 
                 ['You are not authorized to perform this action.'],
                 403
             );
         }
-        $customers = Customer::all();
+        $directors = Director::all();
     
         return $this->sendResponse(
-            CustomerResource::collection($customers), 
-            'Customers retrieved successfully.'
+            DirectorResource::collection($directors), 
+            'directors retrieved successfully.'
         );
     }
 
     public function store(Request $request): JsonResponse
     {
-        if (Gate::denies('create', Customer::class)) {
+        if (Gate::denies('create', Director::class)) {
             return $this->sendError(
                 'Permission denied.', 
                 ['You are not authorized to perform this action.'],
@@ -41,30 +41,31 @@ class CustomerController extends BaseController
             );
         }
         $input = $request->all();
+   
         $validator = Validator::make($input, [
             'name' => 'required',
             'address' => 'required',
-            'dob' => 'required',
-            'phone' => 'required'
+            'phone' => 'required',
+            'email' => 'required|email'
         ]);
+   
         if($validator->fails()){
             return $this->sendError('Validation Error.', $validator->errors(), 422);
         }
    
-        $customer = Customer::create($input);
+        $director = Director::create($input);
    
-        return $this->sendResponse(
-            new CustomerResource($customer), 'Customer created successfully.');
+        return $this->sendResponse(new DirectorResource($director), 'director created successfully.');
     }
 
     public function show(string $id): JsonResponse
     {
-        $customer = Customer::find($id);
-        if (is_null($customer)) {
-            return $this->sendError('Customer not found.');
+        $director = Director::find($id);
+          if (is_null($director)) {
+            return $this->sendError('director not found.');
         }
    
-        if (Gate::denies('view', $customer)) {
+        if (Gate::denies('view', $director)) {
             return $this->sendError(
                 'Permission denied.', 
                 ['You are not authorized to perform this action.'],
@@ -72,51 +73,51 @@ class CustomerController extends BaseController
             );
         }
 
-        return $this->sendResponse(
-            new CustomerResource($customer), 'Customer retrieved successfully.');
+        return $this->sendResponse(new DirectorResource($director), 'director retrieved successfully.');
     }
 
-    public function update(Request $request, Customer $customer): JsonResponse
+    public function update(Request $request, Director $director): JsonResponse
     {
-        if (Gate::denies('update', $customer)) {
+        if (Gate::denies('update', $director)) {
             return $this->sendError(
                 'Permission denied.', 
                 ['You are not authorized to perform this action.'],
                 403
             );
         }
-        $input = $request->all(); 
+        $input = $request->all();
+   
         $validator = Validator::make($input, [
             'name' => 'required',
             'address' => 'required',
-            'dob' => 'required',
-            'phone' => 'required'
+            'phone' => 'required',
+            'email' => 'required|email'
         ]);
+   
         if($validator->fails()){
             return $this->sendError('Validation Error.', $validator->errors(), 422);
         }
    
-        $customer->name = $input['name'];
-        $customer->address = $input['address'];
-        $customer->dob = $input['dob'];
-        $customer->phone = $input['phone'];
-        $customer->save();
+        $director->name = $input['name'];
+        $director->address = $input['address'];
+        $director->phone = $input['phone'];
+        $director->email = $input['email'];
+        $director->save();
    
-        return $this->sendResponse(
-            new CustomerResource($customer), 'Customer updated successfully.');
+        return $this->sendResponse(new DirectorResource($director), 'director updated successfully.');
     }
 
-    public function destroy(Customer $customer): JsonResponse
+    public function destroy(Director $director): JsonResponse
     {
-        if (Gate::denies('delete', $customer)) {
+        if (Gate::denies('delete', $director)) {
             return $this->sendError(
                 'Permission denied.', 
                 ['You are not authorized to perform this action.'],
                 403
             );
         }
-        $customer->delete();
+        $director->delete();
 
-        return $this->sendResponse([], 'Customer deleted successfully.');
+        return $this->sendResponse([], 'director deleted successfully.');
     }
 }

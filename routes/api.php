@@ -5,8 +5,9 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\CustomerController;
-use App\Http\Controllers\API\SupplierController;
+use App\Http\Controllers\API\DirectorController;
 use App\Http\Controllers\API\ProductController;
+
 
 Route::controller(AuthController::class)->group(function(){
     Route::post('register', 'register');

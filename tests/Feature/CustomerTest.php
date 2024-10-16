@@ -50,8 +50,8 @@ class CustomerTest extends TestCase
                     'id',
                     'name',
                     'address',
+                    'dob',
                     'phone',
-                    'email',
                     'created_at',
                     'updated_at',
                 ]
@@ -98,8 +98,8 @@ class CustomerTest extends TestCase
                     'id',
                     'name',
                     'address',
+                    'dob',
                     'phone',
-                    'email',
                     'created_at',
                     'updated_at',
                 ]
@@ -124,13 +124,13 @@ class CustomerTest extends TestCase
             'success',
             'message',
             'data' => [
-                'id',
-                'name',
-                'address',
-                'phone',
-                'email',
-                'created_at',
-                'updated_at',
+                    'id',
+                    'name',
+                    'address',
+                    'dob',
+                    'phone',
+                    'created_at',
+                    'updated_at',
             ]
         ]);
 
@@ -138,15 +138,15 @@ class CustomerTest extends TestCase
         $message = $response->json('message');
         $name = $response->json('data.name');
         $address = $response->json('data.address');
+        $dob = $response->json('data.dob');
         $phone = $response->json('data.phone');
-        $email = $response->json('data.email');
 
         $this->assertEquals($success, true);
         $this->assertEquals($message, 'Customer retrieved successfully.');
         $this->assertEquals($name, $customer->name);
         $this->assertEquals($address, $customer->address);
+        $this->assertEquals($dob, $customer->dob);
         $this->assertEquals($phone, $customer->phone);
-        $this->assertEquals($email, $customer->email);
 
         $this->assertDatabaseHas('customers', [
             'id' => $customer->id
@@ -191,13 +191,13 @@ class CustomerTest extends TestCase
             'success',
             'message',
             'data' => [
-                'id',
-                'name',
-                'address',
-                'phone',
-                'email',
-                'created_at',
-                'updated_at',
+                    'id',
+                    'name',
+                    'address',
+                    'dob',
+                    'phone',
+                    'created_at',
+                    'updated_at',
             ]
         ]);
 
@@ -205,15 +205,15 @@ class CustomerTest extends TestCase
         $message = $response->json('message');
         $name = $response->json('data.name');
         $address = $response->json('data.address');
+        $dob = $response->json('data.dob');
         $phone = $response->json('data.phone');
-        $email = $response->json('data.email');
 
         $this->assertEquals($success, true);
         $this->assertEquals($message, 'Customer created successfully.');
         $this->assertEquals($name, $customer->name);
         $this->assertEquals($address, $customer->address);
+        $this->assertEquals($dob, $customer->dob);
         $this->assertEquals($phone, $customer->phone);
-        $this->assertEquals($email, $customer->email);
 
         $this->assertDatabaseHas('customers', [
             'name' => $customer->name
@@ -260,8 +260,8 @@ class CustomerTest extends TestCase
                 'id',
                 'name',
                 'address',
+                'dob',
                 'phone',
-                'email',
                 'created_at',
                 'updated_at',
             ]
@@ -271,15 +271,15 @@ class CustomerTest extends TestCase
         $message = $response->json('message');
         $name = $response->json('data.name');
         $address = $response->json('data.address');
+        $dob = $response->json('data.dob');
         $phone = $response->json('data.phone');
-        $email = $response->json('data.email');
 
         $this->assertEquals($success, true);
         $this->assertEquals($message, 'Customer updated successfully.');
         $this->assertEquals($name, $updatedCustomer->name);
         $this->assertEquals($address, $updatedCustomer->address);
+        $this->assertEquals($dob, $updatedCustomer->dob);
         $this->assertEquals($phone, $updatedCustomer->phone);
-        $this->assertEquals($email, $updatedCustomer->email);
 
         $this->assertDatabaseHas('customers', [
             'name' => $updatedCustomer->name
