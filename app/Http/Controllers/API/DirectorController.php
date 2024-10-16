@@ -44,9 +44,7 @@ class DirectorController extends BaseController
    
         $validator = Validator::make($input, [
             'name' => 'required',
-            'address' => 'required',
-            'phone' => 'required',
-            'email' => 'required|email'
+            'website' => 'required',
         ]);
    
         if($validator->fails()){
@@ -62,7 +60,7 @@ class DirectorController extends BaseController
     {
         $director = Director::find($id);
           if (is_null($director)) {
-            return $this->sendError('director not found.');
+            return $this->sendError('Director not found.');
         }
    
         if (Gate::denies('view', $director)) {
@@ -89,9 +87,7 @@ class DirectorController extends BaseController
    
         $validator = Validator::make($input, [
             'name' => 'required',
-            'address' => 'required',
-            'phone' => 'required',
-            'email' => 'required|email'
+            'website' => 'required'
         ]);
    
         if($validator->fails()){
@@ -99,9 +95,7 @@ class DirectorController extends BaseController
         }
    
         $director->name = $input['name'];
-        $director->address = $input['address'];
-        $director->phone = $input['phone'];
-        $director->email = $input['email'];
+        $director->website = $input['website'];
         $director->save();
    
         return $this->sendResponse(new DirectorResource($director), 'director updated successfully.');

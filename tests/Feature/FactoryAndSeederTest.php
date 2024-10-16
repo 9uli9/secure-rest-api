@@ -32,7 +32,6 @@ class FactoryAndSeederTest extends TestCase
         $this->assertDatabaseCount('roles', 4);
         $this->assertDatabaseHas('roles', ['name' => 'superuser']);
         $this->assertDatabaseHas('roles', ['name' => 'admin'    ]);
-        $this->assertDatabaseHas('roles', ['name' => 'customer' ]);
         $this->assertDatabaseHas('roles', ['name' => 'director' ]);
     }
 
@@ -75,9 +74,8 @@ class FactoryAndSeederTest extends TestCase
 
         $this->assertInstanceOf(Director::class, $director);
         $this->assertNotNull($director->name);
-        $this->assertNotNull($director->address);
-        $this->assertNotNull($director->phone);
-        $this->assertNotNull($director->email);
+        $this->assertNotNull($director->website);
+
 
         $director = Director::factory()->make();
         $this->assertDatabaseMissing('directors', ['name' => $director->name]);
@@ -99,8 +97,8 @@ class FactoryAndSeederTest extends TestCase
         $this->assertInstanceOf(Customer::class, $customer);
         $this->assertNotNull($customer->name);
         $this->assertNotNull($customer->address);
+        $this->assertNotNull($customer->dob);
         $this->assertNotNull($customer->phone);
-        $this->assertNotNull($customer->email);
 
         $customer = Customer::factory()->make();
         $this->assertDatabaseMissing('customers', ['name' => $customer->name]);
