@@ -15,6 +15,7 @@ class Customer extends Model
 
     public function movies()
     {
-        return $this->belongsToMany(Movie::class, 'customer_movie'); 
+        return $this->belongsToMany(Movie::class, 'customer_movie')->withPivot('due', 'extended')->withTimestamps();
     }
+    
 }

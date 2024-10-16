@@ -10,16 +10,16 @@ class CreateCustomerMovieTable extends Migration
     {
         Schema::create('customer_movie', function (Blueprint $table) {
             $table->id();
-            $table->dateTime('due');
-            $table->boolean('extended'); 
-            $table->unsignedBigInteger('movies_id'); 
-            $table->unsignedBigInteger('customer_id'); 
+            $table->date('due');           
+            $table->boolean('extended');        
+            $table->unsignedBigInteger('movie_id'); // Foreign key 
+            $table->unsignedBigInteger('customer_id'); // Foreign key 
 
-            $table->foreign('movies_id')->references('id')->on('cars')->onUpdate('cascade')->onDelete('restrict');
-            $table->foreign('customer_id')->references('id')->on('races')->onUpdate('cascade')->onDelete('restrict');
-            $table->timestamps();
+            // Foreign key constraints
+            $table->foreign('movie_id')->references('id')->on('movies')->onUpdate('cascade')->onDelete('restrict');
+            $table->foreign('customer_id')->references('id')->on('customers')->onUpdate('cascade')->onDelete('restrict');
+            $table->timestamps(); 
         });
-        
     }
 
     public function down(): void
@@ -27,3 +27,4 @@ class CreateCustomerMovieTable extends Migration
         Schema::dropIfExists('customer_movie');
     }
 }
+
