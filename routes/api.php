@@ -7,6 +7,7 @@ use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\CustomerController;
 use App\Http\Controllers\API\DirectorController;
 use App\Http\Controllers\API\MovieController;
+use App\Http\Controllers\API\RentalController;
 
 
 Route::controller(AuthController::class)->group(function(){
@@ -17,6 +18,8 @@ Route::controller(AuthController::class)->group(function(){
 Route::get('/user', function (Request $request) {
     return $request->user()->load('roles');
 })->middleware('auth:sanctum');
+
+Route::post('/rentals', [RentalController::class, 'rentMovie']);
 
 Route::middleware('auth:sanctum')->group( function () {
     Route::apiResource('customers', CustomerController::class)->missing(function (Request $request) {
