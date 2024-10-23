@@ -12,12 +12,17 @@ class CustomerPolicy
 {
     public function before(User $user, string $ability): bool|null
     {
-        $role = Role::where("name", "superuser")->firstOrFail();
-        if ($user->hasRole($role)) {
-            return true;
+        $superuserRole = Role::where("name", "superuser")->firstOrFail();
+        $adminRole = Role::where("name", "admin")->firstOrFail();
+    
+        
+        if ($user->hasRole($superuserRole) || $user->hasRole($adminRole)) {
+            return true; 
         }
-        return null;
+    
+        return null; 
     }
+    
 
     public function viewAny(User $user): bool
     {

@@ -24,20 +24,19 @@ class CustomerTest extends TestCase
 
         // Retrieve roles
         $superRole = Role::where('name', 'superuser')->first();
-        $customerRole = Role::where('name', 'customer')->first();
-        $directorRole = Role::where('name', 'director')->first();
+        $adminRole = Role::where('name', 'admin')->first();
+        $guestRole = Role::where('name', 'guest')->first();
 
         $this->superUser = $superRole->users()->first();
-        $this->customerUser = $customerRole->users()->first();
-        $this->directorUser = $directorRole->users()->first();
+        $this->adminUser = $adminRole->users()->first();
+        $this->guestUser = $guestRole->users()->first();
 
-        // Created 80 customers
         Customer::factory()->count(10)->create();
     }
 
     public function test_customer_index(): void
     {
-        $response = $this->actingAs($this->customerUser)
+        $response = $this->actingAs($this->adminUser)
                          ->getJson(route('customers.index'));
 
         $response->assertStatus(200);
@@ -65,24 +64,6 @@ class CustomerTest extends TestCase
         $this->assertEquals($message, 'Customers retrieved successfully.');
         $this->assertCount(80, $customers);
     }
-
-    // public function test_customer_index_authorisation_fail(): void
-    // {
-    //     $response = $this->actingAs($this->customerUser)
-    //                      ->getJson(route('customers.index'));
-
-    //     $response->assertStatus(403);
-    //     $response->assertJsonStructure([
-    //         'success',
-    //         'message',
-    //         'data'
-    //     ]);
-    //     $success = $response->json('success');
-    //     $message = $response->json('message');
-
-    //     $this->assertEquals($success, false);
-    //     $this->assertEquals($message, 'Permission denied.');
-    // }
 
     public function test_customer_index_authorisation_superuser(): void
     {

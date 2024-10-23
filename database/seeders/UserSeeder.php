@@ -14,8 +14,23 @@ class UserSeeder extends Seeder
     {
         $superRole    = Role::where("name", "superuser")->firstOrFail();
         $adminRole    = Role::where("name", "admin"    )->firstOrFail();
-        $customerRole = Role::where("name", "customer" )->firstOrFail();
-        $directorRole = Role::where("name", "director" )->firstOrFail();
+        $guestRole    = Role::where("name", "guest"    )->firstOrFail();
+
+        $testGuestUser = User::create([
+            'name' => 'Guest User',
+            'email' => 'guestuser@example.com',
+            'password' => bcrypt('password')
+        ]);
+
+        $testAdminUser = User::create([
+            'name' => 'Admin User',
+            'email' => 'adminuser@example.com',
+            'password' => bcrypt('password')
+        ]);
+
+
+        $testGuestUser->assignRole($guestRole); 
+        $testAdminUser->assignRole($adminRole); 
 
         $superUser = User::factory()->create();
         $superUser->assignRole($superRole);
@@ -23,10 +38,7 @@ class UserSeeder extends Seeder
         $adminUser = User::factory()->create();
         $adminUser->assignRole($adminRole);
 
-        $customerAdminUser = User::factory()->create();
-        $customerAdminUser->assignRole($customerRole);
-        
-        $directorAdminUser = User::factory()->create();
-        $directorAdminUser->assignRole($directorRole);
+        $guestUser = User::factory()->create();
+        $guestUser->assignRole($guestRole);
     }
 }

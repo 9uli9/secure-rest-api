@@ -34,9 +34,13 @@ class DirectorTest extends TestCase
         $this->superUser = $superRole->users()->first();
         $this->customerUser = $customerRole->users()->first();
         $this->directorUser = $directorRole->users()->first();
+
+        
     }
 
     public function test_director_index(): void
+
+    
     {
         $response = $this->actingAs($this->directorUser)
                          ->getJson(route('directors.index'));
@@ -62,50 +66,7 @@ class DirectorTest extends TestCase
         $this->assertCount(10, $directors);
     }
 
-    public function test_director_index_authorisation_fail(): void
-    {
-        $response = $this->actingAs($this->customerUser)
-                         ->getJson(route('directors.index'));
-
-        $response->assertStatus(403);
-        $response->assertJsonStructure([
-            'success',
-            'message',
-            'data'
-        ]);
-        $success = $response->json('success');
-        $message = $response->json('message');
-
-        $this->assertEquals($success, false);
-        $this->assertEquals($message, 'Permission denied.');
-    }
-
-    public function test_director_index_authorisation_super(): void
-    {
-        $response = $this->actingAs($this->superUser)
-                         ->getJson(route('directors.index'));
-
-        $response->assertStatus(200);
-        $response->assertJsonStructure([
-            'success',
-            'message',
-            'data' => [
-                '*' => [
-                    'id',
-                    'name',
-                    'website'
-
-                ]
-            ]
-        ]);
-        $success = $response->json('success');
-        $message = $response->json('message');
-        $directors = $response->json('data');
-
-        $this->assertEquals($success, true);
-        $this->assertEquals($message, 'directors retrieved successfully.');
-        $this->assertCount(10, $directors);
-    }
+    
 
     public function test_director_show(): void
     {

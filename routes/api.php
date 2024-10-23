@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\CustomerController;
 use App\Http\Controllers\API\DirectorController;
-use App\Http\Controllers\API\ProductController;
+use App\Http\Controllers\API\MovieController;
 
 
 Route::controller(AuthController::class)->group(function(){

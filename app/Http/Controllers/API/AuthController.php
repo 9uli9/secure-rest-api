@@ -5,6 +5,8 @@ namespace App\Http\Controllers\API;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Role;
+
 
 use App\Http\Controllers\API\BaseController as BaseController;
 use App\Models\User;
@@ -21,6 +23,8 @@ class AuthController extends BaseController
             'email' => 'required|email',
             'password' => 'required',
             'c_password' => 'required|same:password',
+            
+            
         ]);
    
         if($validator->fails()){
@@ -30,6 +34,8 @@ class AuthController extends BaseController
         $input = $request->all();
         $input['password'] = bcrypt($input['password']);
         $user = User::create($input);
+        $guestRole    = Role::where("name", "guest"    )->firstOrFail();
+        $user->assignRole($guestRole);
         $success['token'] =  $user->createToken('MyApp')->plainTextToken;
         $success['name'] =  $user->name;
    
@@ -49,4 +55,6 @@ class AuthController extends BaseController
             return $this->sendError('Unauthorised.', ['error'=>'Unauthorised']);
         } 
     }
-}
+
+   }
+

@@ -12,10 +12,10 @@ class CreateCustomerMovieTable extends Migration
             $table->id();
             $table->date('due');           
             $table->boolean('extended');        
-            $table->unsignedBigInteger('movie_id'); // Foreign key 
-            $table->unsignedBigInteger('customer_id'); // Foreign key 
+            $table->unsignedBigInteger('movie_id'); 
+            $table->unsignedBigInteger('customer_id'); 
 
-            // Foreign key constraints
+            
             $table->foreign('movie_id')->references('id')->on('movies')->onUpdate('cascade')->onDelete('restrict');
             $table->foreign('customer_id')->references('id')->on('customers')->onUpdate('cascade')->onDelete('restrict');
             $table->timestamps(); 
