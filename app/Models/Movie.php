@@ -14,6 +14,7 @@ class Movie extends Model
         'duration',
         'rating',
         'year',
+        'director_id'
     ];
 
     public function customers()
@@ -21,6 +22,10 @@ class Movie extends Model
     return $this->belongsToMany(Customer::class, 'customer_movie')->withPivot('due', 'extended')->withTimestamps();
 }
 
+public function director()
+    {
+        return $this->belongsTo(Director::class);
+    }
 
     
 }

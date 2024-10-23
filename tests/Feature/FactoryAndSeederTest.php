@@ -29,17 +29,17 @@ class FactoryAndSeederTest extends TestCase
     public function test_role_seeder()
     {
         $this->seed(RoleSeeder::class);
-        $this->assertDatabaseCount('roles', 4);
+        $this->assertDatabaseCount('roles', 3);
         $this->assertDatabaseHas('roles', ['name' => 'superuser']);
         $this->assertDatabaseHas('roles', ['name' => 'admin'    ]);
-        $this->assertDatabaseHas('roles', ['name' => 'director' ]);
+        $this->assertDatabaseHas('roles', ['name' => 'guest' ]);
     }
 
     public function test_permission_seeder()
     {
         $this->seed(RoleSeeder::class);
         $this->seed(PermissionSeeder::class);
-        $this->assertDatabaseCount('permissions', 35);
+        $this->assertDatabaseCount('permissions', 28);
     }
 
     public function test_user_factory()
@@ -65,7 +65,7 @@ class FactoryAndSeederTest extends TestCase
         $this->seed(RoleSeeder::class);
         $this->seed(PermissionSeeder::class);
         $this->seed(UserSeeder::class);
-        $this->assertDatabaseCount('users', 4);
+        $this->assertDatabaseCount('users', 5);
     }
 
     public function test_director_factory()

@@ -12,21 +12,15 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->integer('duration');
-            $table->char('rating', 1);
-            $table->string('year');
+            $table->char('rating', 1); // Consider using a more appropriate type for ratings
+            $table->string('year'); // Use an integer type if it's only a year
+            $table->foreignId('director_id')->constrained()->onUpdate('cascade')->onDelete('cascade'); // Foreign key definition
             $table->timestamps();
-             
-        });
-
-        Schema::table('movies', function (Blueprint $table) {
-            $table->foreignId('director_id')->constrained()->onUpdate('restrict')->onDelete('restrict');
         });
     }
+
     public function down(): void
     {
-        Schema::table('movies', function (Blueprint $table) {
-            $table->dropConstrainedForeignId('director_id');
-        });
-        Schema::dropIfExists('movies');
+        Schema::dropIfExists('movies'); // This will drop the table along with its foreign keys
     }
 };

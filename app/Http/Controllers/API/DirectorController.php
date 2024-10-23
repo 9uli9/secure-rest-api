@@ -27,7 +27,7 @@ class DirectorController extends BaseController
     
         return $this->sendResponse(
             DirectorResource::collection($directors), 
-            'directors retrieved successfully.'
+            'Got All Directors Data Successfully!.'
         );
     }
 
@@ -53,7 +53,7 @@ class DirectorController extends BaseController
    
         $director = Director::create($input);
    
-        return $this->sendResponse(new DirectorResource($director), 'director created successfully.');
+        return $this->sendResponse(new DirectorResource($director), 'Created Director Successfully!');
     }
 
     public function show(string $id): JsonResponse
@@ -71,7 +71,7 @@ class DirectorController extends BaseController
             );
         }
 
-        return $this->sendResponse(new DirectorResource($director), 'director retrieved successfully.');
+        return $this->sendResponse(new DirectorResource($director), 'Got Director Data Successfully!.');
     }
 
     public function update(Request $request, Director $director): JsonResponse
@@ -98,7 +98,7 @@ class DirectorController extends BaseController
         $director->website = $input['website'];
         $director->save();
    
-        return $this->sendResponse(new DirectorResource($director), 'director updated successfully.');
+        return $this->sendResponse(new DirectorResource($director), 'Updated Director Data Successfully!');
     }
 
     public function destroy(Director $director): JsonResponse
@@ -112,6 +112,6 @@ class DirectorController extends BaseController
         }
         $director->delete();
 
-        return $this->sendResponse([], 'director deleted successfully.');
+        return $this->sendResponse([], 'Director Was Deleted Successfully!');
     }
 }

@@ -15,4 +15,10 @@ class Director extends Model
     protected $fillable = [
         'name', 'website'
     ];
+
+
+    public function movies()
+    {
+        return $this->hasMany(Movie::class);
+    }
 }

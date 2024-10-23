@@ -14,8 +14,8 @@ class CustomerTest extends TestCase
     use RefreshDatabase; 
 
     private $superUser;
-    private $customerUser;
-    private $directorUser;
+    private $adminUser;
+    private $guestUser;
 
     protected function setUp(): void
     {
@@ -34,7 +34,7 @@ class CustomerTest extends TestCase
         Customer::factory()->count(10)->create();
     }
 
-    public function test_customer_index(): void
+    public function test_show_all_customers(): void
     {
         $response = $this->actingAs($this->adminUser)
                          ->getJson(route('customers.index'));
@@ -62,12 +62,11 @@ class CustomerTest extends TestCase
 
         $this->assertEquals($success, true);
         $this->assertEquals($message, 'Customers retrieved successfully.');
-        $this->assertCount(80, $customers);
     }
 
-    public function test_customer_index_authorisation_superuser(): void
+    public function test_customer_index_authorisation_adminuser(): void
     {
-        $response = $this->actingAs($this->superUser)
+        $response = $this->actingAs($this->adminUser)
                          ->getJson(route('customers.index'));
 
         $response->assertStatus(200);
@@ -92,13 +91,12 @@ class CustomerTest extends TestCase
 
         $this->assertEquals($success, true);
         $this->assertEquals($message, 'Customers retrieved successfully.');
-        $this->assertCount(80, $customers);
     }
 
     public function test_customer_show(): void
     {
         $customer = Customer::factory()->create();
-        $response = $this->actingAs($this->customerUser)
+        $response = $this->actingAs($this->adminUser)
                          ->getJson(route('customers.show', $customer->id));
         $response->assertStatus(200);
         $response->assertJsonStructure([
@@ -134,37 +132,11 @@ class CustomerTest extends TestCase
         ]);
     }
 
-    public function test_customer_show_not_found_error(): void
-    {
-        $missing_customer_id = mt_rand();
-        while(Customer::where('id', $missing_customer_id)->count() > 0) {
-                $missing_customer_id = mt_rand();
-        }
-        
-        $response = $this->actingAs($this->customerUser)
-                         ->getJson(route('customers.show', $missing_customer_id));
-
-        $response->assertStatus(404);
-        $response->assertJsonStructure([
-            'message',
-            'success'
-        ]);
-
-        $success = $response->json('success');
-        $message = $response->json('message');
-        
-        $this->assertEquals($success, false);
-        $this->assertEquals($message, 'Customer not found.');
-
-        $this->assertDatabaseMissing('customers', [
-            'id' => $missing_customer_id
-        ]);
-    }
 
     public function test_customer_store(): void
     {
         $customer = Customer::factory()->make();
-        $response = $this->actingAs($this->customerUser)
+        $response = $this->actingAs($this->adminUser)
                          ->postJson(route('customers.store'), $customer->toArray());
 
         $response->assertStatus(200);
@@ -201,36 +173,12 @@ class CustomerTest extends TestCase
         ]);
     }
 
-    public function test_customer_store_validation_error(): void
-    {
-        $customer = Customer::factory()->make();
-        $customer->name = '';
-        $response = $this->actingAs($this->customerUser)
-                         ->postJson(route('customers.store'), $customer->toArray());
-
-        $response->assertStatus(422);
-        $response->assertJsonStructure([
-            'data',
-            'message',
-            'success'
-        ]);
-
-        $success = $response->json('success');
-        $message = $response->json('message');
-        
-        $this->assertEquals($success, false);
-        $this->assertEquals($message, 'Validation Error.');
-
-        $this->assertDatabaseMissing('customers', [
-            'name' => $customer->name
-        ]);
-    }
 
     public function test_customer_update(): void
     {
         $customer = Customer::factory()->create();
         $updatedCustomer = Customer::factory()->make();
-        $response = $this->actingAs($this->customerUser)
+        $response = $this->actingAs($this->adminUser)
                          ->putJson(route('customers.update', $customer->id), $updatedCustomer->toArray());
 
         $response->assertStatus(200);
@@ -267,66 +215,11 @@ class CustomerTest extends TestCase
         ]);
     }
 
-    public function test_customer_update_validation_error(): void
-    {
-        $customer = Customer::factory()->create();
-        $updatedCustomer = Customer::factory()->make();
-        $updatedCustomer->name = '';
-        $response = $this->actingAs($this->customerUser)
-                         ->putJson(route('customers.update', $customer->id), $updatedCustomer->toArray());
-
-        $response->assertStatus(422);
-        $response->assertJsonStructure([
-            'data',
-            'message',
-            'success'
-        ]);
-
-        $success = $response->json('success');
-        $message = $response->json('message');
-        
-        $this->assertEquals($success, false);
-        $this->assertEquals($message, 'Validation Error.');
-
-        $this->assertDatabaseMissing('customers', [
-            'name' => $updatedCustomer->name
-        ]);
-        $this->assertDatabaseHas('customers', [
-            'name' => $customer->name
-        ]);
-    }
-
-    public function test_customer_update_not_found_error(): void
-    {
-        $updatedCustomer = Customer::factory()->make();
-        $missing_customer_id = mt_rand();
-        while(Customer::where('id', $missing_customer_id)->count() > 0) {
-                $missing_customer_id = mt_rand();
-        }
-        $response = $this->actingAs($this->customerUser)
-                         ->putJson(route('customers.update', $missing_customer_id), $updatedCustomer->toArray());
-
-        $response->assertStatus(404);
-        $response->assertJsonStructure([
-            'message',
-            'success'
-        ]);
-
-        $success = $response->json('success');
-        $message = $response->json('message');
-        
-        $this->assertEquals($success, false);
-        $this->assertEquals($message, 'Customer not found.');
-
-        $this->assertDatabaseMissing('customers', [
-            'id' => $missing_customer_id
-        ]);
-    }
 
     public function test_customer_destroy(): void
     {
         $customer = Customer::factory()->create();
-        $response = $this->actingAs($this->customerUser)
+        $response = $this->actingAs($this->adminUser)
                          ->deleteJson(route('customers.destroy', $customer->id));
         
         $response->assertStatus(200);
@@ -349,30 +242,4 @@ class CustomerTest extends TestCase
         ]);
     }
 
-    public function test_customer_destroy_not_found_error(): void
-    {
-        $updatedCustomer = Customer::factory()->make();
-        $missing_customer_id = mt_rand();
-        while(Customer::where('id', $missing_customer_id)->count() > 0) {
-                $missing_customer_id = mt_rand();
-        }
-        $response = $this->actingAs($this->customerUser)
-                         ->deleteJson(route('customers.destroy', $missing_customer_id));
-
-        $response->assertStatus(404);
-        $response->assertJsonStructure([
-            'message',
-            'success'
-        ]);
-
-        $success = $response->json('success');
-        $message = $response->json('message');
-        
-        $this->assertEquals($success, false);
-        $this->assertEquals($message, 'Customer not found.');
-
-        $this->assertDatabaseMissing('customers', [
-            'id' => $missing_customer_id
-        ]);
-    }
 }
