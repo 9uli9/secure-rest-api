@@ -19,7 +19,7 @@ Route::get('/user', function (Request $request) {
     return $request->user()->load('roles');
 })->middleware('auth:sanctum');
 
-Route::post('/rentals', [RentalController::class, 'rentMovie']);
+Route::post('/rentals', [RentalController::class, 'rentMovie'])->middleware('auth:sanctum');
 
 Route::middleware('auth:sanctum')->group( function () {
     Route::apiResource('customers', CustomerController::class)->missing(function (Request $request) {

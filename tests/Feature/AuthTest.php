@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Facades\Log;
 use Database\Seeders\UserSeeder;
 use Tests\TestCase;
 
@@ -15,6 +16,12 @@ class AuthTest extends TestCase
     use RefreshDatabase;
     use WithFaker;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->seed();
+    }
+
     public function test_user_register(): void
     {
         $user = [
@@ -23,6 +30,7 @@ class AuthTest extends TestCase
             'password' => 'mysecret',
             'c_password' => 'mysecret'
         ];
+        Log::info($user);
         $response = $this->postJson('/api/register', $user);
 
         $response->assertStatus(200);
@@ -60,7 +68,7 @@ class AuthTest extends TestCase
         ];
         $response = $this->postJson('/api/register', $user);
 
-        $response->assertStatus(404);
+        $response->assertStatus(422);
         $response->assertJsonStructure([
             'data',
             'message',

@@ -28,9 +28,16 @@ class UserSeeder extends Seeder
             'password' => bcrypt('password')
         ]);
 
+        $testSuperUser = User::create([
+            'name' => 'Super User',
+            'email' => 'superuser@example.com',
+            'password' => bcrypt('password')
+        ]);
+
 
         $testGuestUser->assignRole($guestRole); 
-        $testAdminUser->assignRole($adminRole); 
+        $testAdminUser->assignRole($adminRole);
+        $testSuperUser->assignRole($superRole);  
 
         $superUser = User::factory()->create();
         $superUser->assignRole($superRole);

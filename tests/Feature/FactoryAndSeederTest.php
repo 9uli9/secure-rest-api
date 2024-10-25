@@ -65,7 +65,7 @@ class FactoryAndSeederTest extends TestCase
         $this->seed(RoleSeeder::class);
         $this->seed(PermissionSeeder::class);
         $this->seed(UserSeeder::class);
-        $this->assertDatabaseCount('users', 5);
+        $this->assertDatabaseCount('users', 6);
     }
 
     public function test_director_factory()

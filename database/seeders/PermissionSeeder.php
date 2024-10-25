@@ -16,7 +16,7 @@ class PermissionSeeder extends Seeder
         $guestRole = Role::where("name", "guest")->firstOrFail();
 
 
-        $resources = ["customer", "movie", "director", "user"];
+        $resources = ["customer", "movie", "director", "user","customer_movie"];
         $verbs = ["view", "viewAny", "create", "update", "delete", "restore", "forceDelete"];
 
 
@@ -27,17 +27,21 @@ class PermissionSeeder extends Seeder
                     "name" => $verb . "-" . $resource
                 ]);
 
-               
                 $superRole->assignPermission($permission);
-
 
                 if ($resource !== "user") {
                     $adminRole->assignPermission($permission);
                 }
+                else {
+                    if ($verb === "view" || $verb === "viewAny") {
+                        $adminRole->assignPermission($permission);
+                    }
+                }
 
-               
                 if ($verb === "view" || $verb === "viewAny") {
-                    $guestRole->assignPermission($permission);
+                    if ($resource === "movie" || $resource === "director") {
+                        $guestRole->assignPermission($permission);
+                    }
                 }
             }
         }

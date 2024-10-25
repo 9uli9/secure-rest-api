@@ -5,11 +5,12 @@ namespace App\Http\Controllers\API;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
-use App\Models\Role;
-
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 
 use App\Http\Controllers\API\BaseController as BaseController;
 use App\Models\User;
+use App\Models\Role;
 
 use Validator;
    
@@ -28,13 +29,13 @@ class AuthController extends BaseController
         ]);
    
         if($validator->fails()){
-            return $this->sendError('Validation Error.', $validator->errors());
+            return $this->sendError('Validation Error.', $validator->errors(), 422);
         }
    
         $input = $request->all();
         $input['password'] = bcrypt($input['password']);
         $user = User::create($input);
-        $guestRole    = Role::where("name", "guest"    )->firstOrFail();
+        $guestRole = Role::where("name", "guest")->firstOrFail();
         $user->assignRole($guestRole);
         $success['token'] =  $user->createToken('MyApp')->plainTextToken;
         $success['name'] =  $user->name;
